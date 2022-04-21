@@ -31,7 +31,7 @@ int main()
 	}
 
 	// Creating the window 1920x1080 (could be any other size)
-	SDL_Window* window = SDL_CreateWindow("FirstSDL", 
+	SDL_Window* window = SDL_CreateWindow("FirstSDL",
 		0, 0,
 		1920, 1080,
 		SDL_WINDOW_SHOWN);
@@ -77,13 +77,13 @@ int main()
 
 	// The main loop
 	// Every iteration is a frame
-	Coords StartPosition;
-	Coords CurrentPosition = {400, 400};
+	Coords StartPosition = { 400, 400 };
+	Coords CurrentPosition = { 400, 400 };
 	Coords GoalPosition = { -1, -1 };
 	int lastTime, TimeOfRender;
 	int DeltaTime = 16;
-	float temp;
-	bool DoGo = false;
+	int ImageSpeed = 10;
+	double XProportion = 0 , YProportion = 0;
 	while (!done)
 	{
 		lastTime = SDL_GetTicks();
@@ -106,24 +106,28 @@ int main()
 					event.quit.timestamp = SDL_GetTicks();
 					SDL_PushEvent(&event);
 					break;
-				// Other keys here
-				default: 
+					// Other keys here
+				default:
 					break;
 				}
 			}
-			else if(sdl_event.type == SDL_MOUSEBUTTONDOWN)
+			else if (sdl_event.type == SDL_MOUSEBUTTONDOWN)
 			{
 				switch (sdl_event.button.button)
 				{
 				case SDL_BUTTON_LEFT:
-					StartPosition.X = CurrentPosition.X;
-					StartPosition.Y = CurrentPosition.Y;
+				{
 					int x, y;
-					SDL_GetMouseState(&x , &y);
+					SDL_GetMouseState(&x, &y);
 					GoalPosition.X = x;
 					GoalPosition.Y = y;
-					DoGo = true;
+					StartPosition.X = CurrentPosition.X;
+					StartPosition.Y = CurrentPosition.Y;
+					double hypotenuse = sqrt(pow(GoalPosition.X - CurrentPosition.X, 2) + pow(GoalPosition.Y - CurrentPosition.Y, 2));
+					XProportion = (GoalPosition.X - CurrentPosition.X) / hypotenuse;
+					YProportion = (GoalPosition.Y - CurrentPosition.Y) / hypotenuse;
 					break;
+				}
 				default:
 					break;
 				}
@@ -133,43 +137,17 @@ int main()
 
 		// Clearing the screen
 		SDL_RenderClear(renderer);
-		if (DoGo)
-		{	
-			if (StartPosition.Y > GoalPosition.Y)
-			{
-				CurrentPosition.Y -= fabs(GoalPosition.Y - StartPosition.Y) / fabs(GoalPosition.X - StartPosition.X) * 10;
-				if (GoalPosition.Y - CurrentPosition.Y > 0)
-				{
-					CurrentPosition.Y = GoalPosition.Y;
-				}
-			}
-			else
-			{
-				CurrentPosition.Y += fabs(GoalPosition.Y - StartPosition.Y) / fabs(GoalPosition.X - StartPosition.X) * 10;
-				if (GoalPosition.Y - CurrentPosition.Y < 0)
-				{
-					CurrentPosition.Y = GoalPosition.Y;
-				}
-			}
-			if (StartPosition.X > GoalPosition.X)
-			{
-				CurrentPosition.X -= fabs(GoalPosition.X - StartPosition.X) / fabs(GoalPosition.Y - StartPosition.Y) * 10;
-				if (GoalPosition.X - CurrentPosition.X > 0)
-				{
-					DoGo = false;
-					CurrentPosition.X = GoalPosition.X;
-				}
-			}
-			else
-			{
-				CurrentPosition.X += fabs(GoalPosition.X - StartPosition.X) / fabs(GoalPosition.Y - StartPosition.Y) * 10;
-				if (GoalPosition.X - CurrentPosition.X < 0)
-				{
-					DoGo = false;
-					CurrentPosition.X = GoalPosition.X;
-				}
-			}
-			
+	
+		if ((GoalPosition.X - StartPosition.X > 0 && CurrentPosition.X + ImageSpeed * XProportion < GoalPosition.X) || (GoalPosition.X - StartPosition.X < 0 && CurrentPosition.X + ImageSpeed * XProportion > GoalPosition.X))
+		{
+			CurrentPosition.X += ImageSpeed * XProportion;
+			CurrentPosition.Y += ImageSpeed * YProportion;
+		}
+
+		else
+		{
+			CurrentPosition.X = GoalPosition.X;
+			CurrentPosition.Y = GoalPosition.Y;
 		}
 		// All drawing goes here
 
@@ -185,14 +163,14 @@ int main()
 		rect.h = (int)tex_height;
 
 		SDL_RenderCopyEx(renderer, // Already know what is that
-						texture, // The image
-						nullptr, // A rectangle to crop from the original image. Since we need the whole image that can be left empty (nullptr)
-						&rect, // The destination rectangle on the screen.
-						0, // An angle in degrees for rotation
-						nullptr, // The center of the rotation (when nullptr, the rect center is taken)
-						SDL_FLIP_NONE); // We don't want to flip the image
+			texture, // The image
+			nullptr, // A rectangle to crop from the original image. Since we need the whole image that can be left empty (nullptr)
+			&rect, // The destination rectangle on the screen.
+			0, // An angle in degrees for rotation
+			nullptr, // The center of the rotation (when nullptr, the rect center is taken)
+			SDL_FLIP_NONE); // We don't want to flip the image
 
-		// Showing the screen to the player
+// Showing the screen to the player
 		SDL_RenderPresent(renderer);
 		TimeOfRender = SDL_GetTicks() - lastTime;
 		Sleep(DeltaTime - TimeOfRender);

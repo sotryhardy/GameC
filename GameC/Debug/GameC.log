@@ -1,0 +1,6 @@
+﻿  main.cpp
+MSVCRTD.lib(exe_main.obj) : error LNK2019: ссылка на неразрешенный внешний символ _main в функции "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ).
+E:\Дистанционка\Python уроки\GameC\SDL2\lib\x64\SDL2.lib : warning LNK4272: тип компьютера библиотеки "x64" конфликтует с типом целевого компьютера "x86"
+E:\Дистанционка\Python уроки\GameC\SDL2\lib\x64\SDL2_image.lib : warning LNK4272: тип компьютера библиотеки "x64" конфликтует с типом целевого компьютера "x86"
+E:\Дистанционка\Python уроки\GameC\SDL2\lib\x64\SDL2main.lib : warning LNK4272: тип компьютера библиотеки "x64" конфликтует с типом целевого компьютера "x86"
+E:\Дистанционка\Python уроки\GameC\Debug\GameC.exe : fatal error LNK1120: неразрешенных внешних элементов: 1

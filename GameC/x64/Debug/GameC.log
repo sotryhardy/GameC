@@ -1,0 +1,3 @@
+﻿  main.cpp
+E:\Дистанционка\Python уроки\GameC\GameC\main.cpp(85,8): warning C4101: temp: неиспользованная локальная переменная
+  GameC.vcxproj -> E:\Дистанционка\Python уроки\GameC\x64\Debug\GameC.exe

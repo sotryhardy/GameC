@@ -82,7 +82,7 @@ int main()
 	Coords GoalPosition = { -1, -1 };
 	int lastTime, TimeOfRender;
 	int DeltaTime = 16;
-	int ImageSpeed = 10;
+	int ImageSpeed = 500;
 	double XProportion = 0 , YProportion = 0;
 	while (!done)
 	{
@@ -137,14 +137,19 @@ int main()
 
 		// Clearing the screen
 		SDL_RenderClear(renderer);
-	
-		if ((GoalPosition.X - StartPosition.X > 0 && CurrentPosition.X + ImageSpeed * XProportion < GoalPosition.X) || (GoalPosition.X - StartPosition.X < 0 && CurrentPosition.X + ImageSpeed * XProportion > GoalPosition.X))
+		double NextPositionValueX = CurrentPosition.X + DeltaTime / 1000.f * ImageSpeed * XProportion;
+		double NextPositionValueY = CurrentPosition.Y + DeltaTime / 1000.f * ImageSpeed * YProportion;
+		bool ConditionX = fabs(GoalPosition.X - StartPosition.X) > fabs(StartPosition.X - NextPositionValueX);
+		bool ConditionY = fabs(GoalPosition.Y - StartPosition.Y) > fabs(StartPosition.Y - NextPositionValueY);
+		if (ConditionX)
 		{
-			CurrentPosition.X += ImageSpeed * XProportion;
-			CurrentPosition.Y += ImageSpeed * YProportion;
+			CurrentPosition.X = NextPositionValueX;
 		}
-
-		else
+		if (ConditionY)
+		{
+			CurrentPosition.Y = NextPositionValueY;
+		}
+		if (!ConditionX && !ConditionY)
 		{
 			CurrentPosition.X = GoalPosition.X;
 			CurrentPosition.Y = GoalPosition.Y;
@@ -174,6 +179,7 @@ int main()
 		SDL_RenderPresent(renderer);
 		TimeOfRender = SDL_GetTicks() - lastTime;
 		Sleep(DeltaTime - TimeOfRender);
+		printf("%i\n", TimeOfRender);
 	}
 
 	// If we reached here then the main loop stoped
